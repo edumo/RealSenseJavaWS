@@ -15,6 +15,7 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import edumo.realsense.ws.face.FacesMsg;
 import edumo.realsense.ws.face.ImageSize;
+import edumo.realsense.ws.hand.HandMsg;
 import edumo.realsense.ws.listener.FaceListener;
 import edumo.realsense.ws.listener.HandListener;
 
@@ -24,6 +25,8 @@ public class RealSenseWS extends WebSocketClient {
 	private static final int UPDATE_CAPTURE_MANAGER = 1;
 
 	private static final int UPDATE_IMAGE_SIZE = 2;
+	private static final int UPDATE_MODULE = 3;
+	private static final int UPDATE_ACTIVE_CONFIGURATION = 4;
 
 	/**
 	 * constructor, data 'a pelo'
@@ -51,6 +54,8 @@ public class RealSenseWS extends WebSocketClient {
 	Integer doTarget = null;
 
 	private Integer captureManagerId;
+	private Integer moduleId;
+	private Integer activeConfgirationId;
 
 	HandListener handListener;
 	FaceListener faceListener;
@@ -102,19 +107,54 @@ public class RealSenseWS extends WebSocketClient {
 		send(json);
 	}
 
-	public void queryModule() {
+	public void queryModule(int module) {
+		doTarget = UPDATE_MODULE;
 		CallRS callRS = new CallRS(counter, new InstanceRS(""
 				+ lastReceivedCall.instance.value), null,
 				"PXCMSenseManager_QueryModule");
-		callRS.mid = CUID_PXCMFaceModule;
+		callRS.mid = module;
 		String json = gson.toJson(callRS);
 		send(json);
 	}
 
-	public void createActiveConfiguration() {
+	public void createActiveConfigurationFace() {
+		doTarget = UPDATE_ACTIVE_CONFIGURATION;
 		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
 				+ lastReceivedCall.instance.value), null,
 				"PXCMFaceModule_CreateActiveConfiguration");
+		String json = gson.toJson(callRS);
+		send(json);
+	}
+
+	public void createActiveConfigurationHand() {
+		doTarget = UPDATE_ACTIVE_CONFIGURATION;
+		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
+				+ lastReceivedCall.instance.value), null,
+				"PXCMHandModule_CreateActiveConfiguration");
+		String json = gson.toJson(callRS);
+		send(json);
+	}
+
+	public void disableAllAlerts() {
+		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
+				+ activeConfgirationId), null,
+				"PXCMHandConfiguration_DisableAllAlerts");
+		String json = gson.toJson(callRS);
+		send(json);
+	}
+
+	public void disableAllGestures() {
+		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
+				+ activeConfgirationId), null,
+				"PXCMHandConfiguration_DisableAllGestures");
+		String json = gson.toJson(callRS);
+		send(json);
+	}
+
+	public void applyChanges() {
+		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
+				+ activeConfgirationId), null,
+				"PXCMHandConfiguration_ApplyChanges");
 		String json = gson.toJson(callRS);
 		send(json);
 	}
@@ -177,7 +217,7 @@ public class RealSenseWS extends WebSocketClient {
 	}
 
 	public void init() {
-		InitRS initRS = new InitRS(true, true, false, true, counter,
+		InitRS initRS = new InitRS(true, true, true, true, counter,
 				new InstanceRS(instanceId), "PXCMSenseManager_Init");
 		String json = gson.toJson(initRS);
 		send(json);
@@ -251,6 +291,13 @@ public class RealSenseWS extends WebSocketClient {
 			case UPDATE_IMAGE_SIZE:
 				imageSize = gson.fromJson(message, ImageSize.class);
 				break;
+			case UPDATE_MODULE:
+				moduleId = callRS.instance.value;
+				break;
+			case UPDATE_ACTIVE_CONFIGURATION:
+				activeConfgirationId = callRS.instance.value;
+				break;
+
 			}
 			doTarget = null;
 		}
@@ -276,7 +323,13 @@ public class RealSenseWS extends WebSocketClient {
 			if (faceListener != null) {
 				faceListener.newFaces(facesMsg.faces);
 			}
-			System.out.println("faces " + facesMsg);
+		}
+
+		if (result.containsKey("hands")) {
+			HandMsg handMsg = gson.fromJson(message, HandMsg.class);
+			if (handListener != null) {
+				handListener.newHands(handMsg.hands);
+			}
 		}
 	}
 

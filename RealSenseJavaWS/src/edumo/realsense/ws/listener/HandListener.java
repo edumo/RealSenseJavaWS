@@ -6,5 +6,5 @@ import edumo.realsense.ws.hand.Hand;
 
 public interface HandListener {
 
-	void newFaces(List<Hand> hands);
+	void newHands(List<Hand> hands);
 }

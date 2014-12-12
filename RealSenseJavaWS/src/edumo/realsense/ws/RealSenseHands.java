@@ -1,18 +1,17 @@
 package edumo.realsense.ws;
 
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_10;
-
-import com.google.gson.Gson;
+import edumo.realsense.ws.hand.Hand;
+import edumo.realsense.ws.listener.HandListener;
 
 public class RealSenseHands {
-	RealSenseWS client;
+
+	RealSenseWS client = null;
 
 	public RealSenseHands() {
-		super();
+		
 	}
 
 	public void init() {
@@ -23,8 +22,8 @@ public class RealSenseHands {
 		}
 	}
 
-	public void start() {
-
+	public void start(HandListener handListener) {
+		client.setHandListener(handListener);
 		client.connect();
 		try {
 			Thread.sleep(200);
@@ -43,7 +42,7 @@ public class RealSenseHands {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		client.queryModule();
+		client.queryModule(RealSenseWS.CUID_PXCMHandModule);
 
 		try {
 			Thread.sleep(1200);
@@ -51,6 +50,34 @@ public class RealSenseHands {
 			e.printStackTrace();
 		}
 		client.init();
+
+		try {
+			Thread.sleep(2200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		client.createActiveConfigurationHand();
+
+		// try {
+		// Thread.sleep(200);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// client.disableAllAlerts();
+		//
+		// try {
+		// Thread.sleep(200);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// client.disableAllGestures();
+		//
+		// try {
+		// Thread.sleep(200);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// client.applyChanges();
 
 		try {
 			Thread.sleep(200);
@@ -73,5 +100,16 @@ public class RealSenseHands {
 		}
 		client.streamFrames();
 	}
+	
+	public static void main(String[] args) {
+		RealSenseHands realSenseHands = new RealSenseHands();
+		realSenseHands.init();
+		realSenseHands.start(new HandListener() {
 
+			@Override
+			public void newHands(List<Hand> hands) {
+				//currentHands = hands;
+			}
+		});
+	}
 }

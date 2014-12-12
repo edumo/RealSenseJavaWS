@@ -41,14 +41,14 @@ public class RealSenseFaces {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		client.queryModule();
+		client.queryModule(RealSenseWS.CUID_PXCMFaceModule);
 
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		client.createActiveConfiguration();
+		client.createActiveConfigurationFace();
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
