@@ -1,3 +1,5 @@
+package edumo.realsense.ws;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.NotYetConnectedException;
@@ -11,11 +13,15 @@ import org.java_websocket.handshake.ServerHandshake;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
+import edumo.realsense.ws.face.FacesMsg;
+import edumo.realsense.ws.face.ImageSize;
+
 public class RealSenseWS extends WebSocketClient {
 
-	private static final int INSTANCE = 0;
+	private static final int UPDATE_INSTANCE = 0;
+	private static final int UPDATE_CAPTURE_MANAGER = 1;
 
-	private static final int CAPTURE_MANAGER = 1;
+	private static final int UPDATE_IMAGE_SIZE = 2;
 
 	/**
 	 * constructor, data 'a pelo'
@@ -29,7 +35,8 @@ public class RealSenseWS extends WebSocketClient {
 	String lastMessage;
 	String lastMessageConfigs;
 	Integer tempReceiveId = null;
-
+	
+	ImageSize imageSize;
 
 	int counter = 1;
 
@@ -38,7 +45,8 @@ public class RealSenseWS extends WebSocketClient {
 
 	boolean error = false;
 	Integer instanceId = 0;
-	Integer updateInstance = 0;
+
+	Integer doTarget = null;
 
 	private Integer captureManagerId;
 
@@ -52,7 +60,7 @@ public class RealSenseWS extends WebSocketClient {
 
 	public void createInstance() {
 		error = false;
-		updateInstance = INSTANCE;
+		doTarget = UPDATE_INSTANCE;
 		AbstractRSCall callRS = new CallRS(counter, new InstanceRS("0"),
 				"2.0.1", "PXCMSenseManager_CreateInstance");
 		String json = gson.toJson(callRS);
@@ -116,7 +124,7 @@ public class RealSenseWS extends WebSocketClient {
 
 	}
 
-	public void setConfig() {
+	public void setConfig(boolean pose, boolean landmarks) {
 
 		LinkedTreeMap result = gson.fromJson(lastMessageConfigs,
 				LinkedTreeMap.class);
@@ -130,10 +138,14 @@ public class RealSenseWS extends WebSocketClient {
 		String json = gson.toJson(result);
 		json = json.replaceAll(".0,", ",");
 		json = json.replaceAll(".0}", "}");
-		int index = json.indexOf("pose");
-		json = json.replace("pose\":{\"isEnabled\":true",
-				"pose\":{\"isEnabled\":false");
-
+		if (!pose) {
+			json = json.replace("pose\":{\"isEnabled\":true",
+					"pose\":{\"isEnabled\":false");
+		}
+		if (!landmarks) {
+			json = json.replace("landmarks\":{\"isEnabled\":true",
+					"landmarks\":{\"isEnabled\":false");
+		}
 		LinkedTreeMap object2 = (LinkedTreeMap) object
 				.get("recognitionInstance");
 		Double recognitionInstance = (Double) object2.get("value");
@@ -153,17 +165,15 @@ public class RealSenseWS extends WebSocketClient {
 
 	public void init() {
 		InitRS initRS = new InitRS(true, true, false, true, counter,
-				new InstanceRS(instanceId),
-				"PXCMSenseManager_Init");
+				new InstanceRS(instanceId), "PXCMSenseManager_Init");
 		String json = gson.toJson(initRS);
 		send(json);
 	}
 
 	public void queryCaptureManager() {
-		updateInstance = CAPTURE_MANAGER;
-		CallRS callRS = new CallRS(counter, new InstanceRS(""
-				+ instanceId), null,
-				"PXCMSenseManager_QueryCaptureManager");
+		doTarget = UPDATE_CAPTURE_MANAGER;
+		CallRS callRS = new CallRS(counter, new InstanceRS("" + instanceId),
+				null, "PXCMSenseManager_QueryCaptureManager");
 		tempReceiveId = lastReceivedCall.instance.value;
 		String json = gson.toJson(callRS);
 		send(json);
@@ -171,13 +181,13 @@ public class RealSenseWS extends WebSocketClient {
 	}
 
 	public void queryImageSize() {
+		doTarget = UPDATE_IMAGE_SIZE;
 		CallRS callRS = new CallRS(counter, new InstanceRS(""
-				+ captureManagerId), null,
-				"PXCMCaptureManager_QueryImageSize");
+				+ captureManagerId), null, "PXCMCaptureManager_QueryImageSize");
 		callRS.type = 1;
 		String json = gson.toJson(callRS);
 		System.out.println(json);
-		 send(json);
+		send(json);
 	}
 
 	public void streamFrames() {
@@ -187,7 +197,7 @@ public class RealSenseWS extends WebSocketClient {
 		callRS.blocking = false;
 		String json = gson.toJson(callRS);
 		System.out.println(json);
-		 send(json);
+		send(json);
 	}
 
 	@Override
@@ -216,25 +226,29 @@ public class RealSenseWS extends WebSocketClient {
 
 		CallRS callRS = gson.fromJson(message, CallRS.class);
 
-		if(updateInstance != null){
-			
-			switch(updateInstance){
-			case INSTANCE:
+		if (doTarget != null) {
+
+			switch (doTarget) {
+			case UPDATE_INSTANCE:
 				instanceId = callRS.instance.value;
 				break;
-			case CAPTURE_MANAGER:
+			case UPDATE_CAPTURE_MANAGER:
 				captureManagerId = callRS.instance.value;
 				break;
+			case UPDATE_IMAGE_SIZE:
+				imageSize = gson.fromJson(message, ImageSize.class);
+				break;
 			}
-			updateInstance = null;
+			doTarget = null;
 		}
-		
+
 		if ((lastReceivedCall == null || lastReceivedCall.instance.value != callRS.instance.value))
 			if (callRS.instance.value != 0) {
 				lastReceivedCall = callRS;
 			}
 
 		LinkedTreeMap result = gson.fromJson(message, LinkedTreeMap.class);
+
 		if (result.containsKey("status")) {
 			String statusValue = result.get("status").toString();
 			int status = (int) Float.parseFloat(statusValue);
@@ -243,12 +257,17 @@ public class RealSenseWS extends WebSocketClient {
 				error = true;
 			}
 		}
+
+		if (result.containsKey("faces")) {
+			FacesMsg facesMsg = gson.fromJson(message, FacesMsg.class);
+			System.out.println("faces " + facesMsg);
+		}
 	}
 
 	@Override
 	public void onError(Exception ex) {
 		System.err.println("an error occured:" + ex);
-	} 
+	}
 
 	public static void main(String[] args) throws URISyntaxException {
 

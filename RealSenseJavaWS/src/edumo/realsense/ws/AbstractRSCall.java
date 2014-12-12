@@ -1,3 +1,4 @@
+package edumo.realsense.ws;
 public class AbstractRSCall {
 
 	public Integer id;

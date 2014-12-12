@@ -1,3 +1,4 @@
+package edumo.realsense.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 

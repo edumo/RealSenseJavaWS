@@ -1,3 +1,4 @@
+package edumo.realsense.ws;
 public class InitRS extends AbstractRSCall {
 
 	Boolean handler;

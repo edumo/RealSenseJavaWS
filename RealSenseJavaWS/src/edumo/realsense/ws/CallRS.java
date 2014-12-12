@@ -1,3 +1,4 @@
+package edumo.realsense.ws;
 public class CallRS extends AbstractRSCall {
 
 	public String js_version;
