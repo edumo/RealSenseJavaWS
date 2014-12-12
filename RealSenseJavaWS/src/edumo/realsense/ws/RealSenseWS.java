@@ -60,6 +60,8 @@ public class RealSenseWS extends WebSocketClient {
 	HandListener handListener;
 	FaceListener faceListener;
 
+	public boolean verbose = false;
+
 	public void setHandListener(HandListener handListener) {
 		this.handListener = handListener;
 	}
@@ -88,7 +90,8 @@ public class RealSenseWS extends WebSocketClient {
 	@Override
 	public void send(String text) throws NotYetConnectedException {
 		if (!error) {
-			System.out.println("\"call" + text);
+			if (verbose)
+				System.out.println("\"call" + text);
 			super.send(text);
 			counter++;
 		} else {
@@ -212,7 +215,6 @@ public class RealSenseWS extends WebSocketClient {
 				"" + expressionInstance.intValue());
 		json = json.replaceAll(recognitionInstanceCad,
 				"" + recognitionInstance.intValue());
-		System.out.println(json);
 		send(json);
 	}
 
@@ -239,7 +241,6 @@ public class RealSenseWS extends WebSocketClient {
 				+ captureManagerId), null, "PXCMCaptureManager_QueryImageSize");
 		callRS.type = 1;
 		String json = gson.toJson(callRS);
-		System.out.println(json);
 		send(json);
 	}
 
@@ -249,7 +250,6 @@ public class RealSenseWS extends WebSocketClient {
 		tempReceiveId = null;
 		callRS.blocking = false;
 		String json = gson.toJson(callRS);
-		System.out.println(json);
 		send(json);
 	}
 
@@ -269,7 +269,8 @@ public class RealSenseWS extends WebSocketClient {
 
 	@Override
 	public void onMessage(String message) {
-		System.out.println("\"_onmessage:" + message);
+		if (verbose)
+			System.out.println("\"_onmessage:" + message);
 
 		lastMessage = message;
 
@@ -343,6 +344,11 @@ public class RealSenseWS extends WebSocketClient {
 		Gson gson = new Gson();
 		AbstractRSCall callRS = new CallRS(33, new InstanceRS("3"));
 		System.out.println(gson.toJson(callRS));
+	}
+
+	public int[] getImageSize() {
+		int[] ret = { imageSize.size.width, imageSize.size.height };
+		return ret;
 	}
 
 }

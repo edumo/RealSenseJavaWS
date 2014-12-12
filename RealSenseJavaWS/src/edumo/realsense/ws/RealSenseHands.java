@@ -13,6 +13,10 @@ public class RealSenseHands {
 	public RealSenseHands() {
 		
 	}
+	
+	public int[] getImageSize(){
+		return client.getImageSize();
+	}
 
 	public void init() {
 		try {
