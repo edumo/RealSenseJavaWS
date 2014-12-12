@@ -2,8 +2,8 @@ package edumo.realsense.ws.face;
 
 public class FaceBoundingRect {
 
-	Integer x;
-	Integer y;
-	Integer w;
-	Integer h;
+	public Integer x;
+	public Integer y;
+	public Integer w;
+	public Integer h;
 }

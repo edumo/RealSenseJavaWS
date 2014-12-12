@@ -1,4 +1,5 @@
 package edumo.realsense.ws;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -7,11 +8,23 @@ import org.java_websocket.drafts.Draft_10;
 
 import com.google.gson.Gson;
 
-public class MainHand {
+public class RealSenseHands {
+	RealSenseWS client;
 
-	public static void main(String[] args) throws URISyntaxException {
+	public RealSenseHands() {
+		super();
+	}
 
-		RealSenseWS client = new RealSenseWS();
+	public void init() {
+		try {
+			client = new RealSenseWS();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void start() {
+
 		client.connect();
 		try {
 			Thread.sleep(200);
@@ -60,4 +73,5 @@ public class MainHand {
 		}
 		client.streamFrames();
 	}
+
 }

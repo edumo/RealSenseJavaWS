@@ -1,17 +1,28 @@
 package edumo.realsense.ws;
-import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft_10;
+import edumo.realsense.ws.listener.FaceListener;
 
-import com.google.gson.Gson;
+public class RealSenseFaces {
 
-public class Main {
+	RealSenseWS client = null;
 
-	public static void main(String[] args) throws URISyntaxException {
-
-		RealSenseWS client = new RealSenseWS();
+	public RealSenseFaces(){
+		
+	}
+	
+	public void init(){
+		try {
+			client = new RealSenseWS();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public void start(FaceListener faceListener){
+		
+		client.setFaceListener(faceListener);
+		
 		client.connect();
 		try {
 			Thread.sleep(200);
@@ -86,5 +97,10 @@ public class Main {
 			e.printStackTrace();
 		}
 		client.streamFrames();
+	}
+	
+	public static void main(String[] args) throws URISyntaxException {
+
+	
 	}
 }

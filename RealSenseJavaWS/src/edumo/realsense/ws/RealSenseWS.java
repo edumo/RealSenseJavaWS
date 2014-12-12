@@ -15,6 +15,8 @@ import com.google.gson.internal.LinkedTreeMap;
 
 import edumo.realsense.ws.face.FacesMsg;
 import edumo.realsense.ws.face.ImageSize;
+import edumo.realsense.ws.listener.FaceListener;
+import edumo.realsense.ws.listener.HandListener;
 
 public class RealSenseWS extends WebSocketClient {
 
@@ -35,7 +37,7 @@ public class RealSenseWS extends WebSocketClient {
 	String lastMessage;
 	String lastMessageConfigs;
 	Integer tempReceiveId = null;
-	
+
 	ImageSize imageSize;
 
 	int counter = 1;
@@ -49,6 +51,17 @@ public class RealSenseWS extends WebSocketClient {
 	Integer doTarget = null;
 
 	private Integer captureManagerId;
+
+	HandListener handListener;
+	FaceListener faceListener;
+
+	public void setHandListener(HandListener handListener) {
+		this.handListener = handListener;
+	}
+
+	public void setFaceListener(FaceListener faceListener) {
+		this.faceListener = faceListener;
+	}
 
 	public RealSenseWS() throws URISyntaxException {
 		super(new URI("ws://localhost:4181"), new Draft_10());
@@ -260,6 +273,9 @@ public class RealSenseWS extends WebSocketClient {
 
 		if (result.containsKey("faces")) {
 			FacesMsg facesMsg = gson.fromJson(message, FacesMsg.class);
+			if (faceListener != null) {
+				faceListener.newFaces(facesMsg.faces);
+			}
 			System.out.println("faces " + facesMsg);
 		}
 	}

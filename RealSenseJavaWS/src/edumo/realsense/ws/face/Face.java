@@ -2,7 +2,7 @@ package edumo.realsense.ws.face;
 
 public class Face {
 
-	Integer userID;
-	Long frameTimestamp;
-	Detection detection;
+	public Integer userID;
+	public Long frameTimestamp;
+	public Detection detection;
 }

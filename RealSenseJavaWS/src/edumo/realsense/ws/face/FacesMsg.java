@@ -4,5 +4,5 @@ import java.util.List;
 
 public class FacesMsg {
 
-	List<Face> faces;
+	public List<Face> faces;
 }

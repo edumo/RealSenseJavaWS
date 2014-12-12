@@ -2,7 +2,7 @@ package edumo.realsense.ws.face;
 
 public class Detection {
 
-	Integer faceAverageDepth;
+	public Integer faceAverageDepth;
 
-	FaceBoundingRect faceBoundingRect;
+	public FaceBoundingRect faceBoundingRect;
 }
