@@ -2,11 +2,11 @@ package edumo.realsense.ws.hand;
 
 public class Hand {
 
-	Integer uniqueId;
-	Integer userId;
-	Long timeStamp;
-	Boolean isCalibrated;
-	Integer bodySide;
+	public Integer uniqueId;
+	public Integer userId;
+	public Long timeStamp;
+	public Boolean isCalibrated;
+	public Integer bodySide;
 
 	public BoundingBoxImage boundingBoxImage;
 	public MassCenterImage massCenterImage;

@@ -56,7 +56,7 @@ public class RealSenseHands {
 		client.init();
 
 		try {
-			Thread.sleep(2200);
+			Thread.sleep(400);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
@@ -91,7 +91,7 @@ public class RealSenseHands {
 		client.queryCaptureManager();
 
 		try {
-			Thread.sleep(1200);
+			Thread.sleep(200);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
