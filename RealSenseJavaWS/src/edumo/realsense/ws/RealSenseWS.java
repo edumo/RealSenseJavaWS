@@ -135,7 +135,7 @@ public class RealSenseWS extends WebSocketClient {
 	public void createActiveConfigurationHand() {
 		doTarget = UPDATE_ACTIVE_CONFIGURATION;
 		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
-				+ lastReceivedCall.instance.value), null,
+				+ moduleId), null,
 				"PXCMHandModule_CreateActiveConfiguration");
 		String json = gson.toJson(callRS);
 		send(json);
@@ -156,6 +156,16 @@ public class RealSenseWS extends WebSocketClient {
 		String json = gson.toJson(callRS);
 		send(json);
 	}
+	
+	public void enableAllGestures() {
+		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
+				+ activeConfgirationId), null,
+				"PXCMHandConfiguration_EnableAllGestures");
+		String json = gson.toJson(callRS);
+		send(json);
+	}
+	
+	
 
 	public void applyChanges() {
 		AbstractRSCall callRS = new CallRS(counter, new InstanceRS(""
@@ -340,6 +350,13 @@ public class RealSenseWS extends WebSocketClient {
 		} else {
 			if (handListener != null) {
 				handListener.newHands(new ArrayList<Hand>());
+			}
+		}
+
+		if (result.containsKey("gestures")) {
+			ArrayList dos = (ArrayList) result.get("gestures");
+			if (!dos.isEmpty()) {
+				System.out.println("hoal");
 			}
 		}
 	}

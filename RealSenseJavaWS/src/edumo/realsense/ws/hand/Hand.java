@@ -7,6 +7,8 @@ public class Hand {
 	public Long timeStamp;
 	public Boolean isCalibrated;
 	public Integer bodySide;
+	
+	public Integer openness;
 
 	public BoundingBoxImage boundingBoxImage;
 	public MassCenterImage massCenterImage;

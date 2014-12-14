@@ -62,26 +62,27 @@ public class RealSenseHands {
 		}
 		client.createActiveConfigurationHand();
 
-		// try {
-		// Thread.sleep(200);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// client.disableAllAlerts();
-		//
-		// try {
-		// Thread.sleep(200);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
+		 try {
+		 Thread.sleep(200);
+		 } catch (InterruptedException e) {
+		 e.printStackTrace();
+		 }
+		 client.disableAllAlerts();
+		
+		 try {
+		 Thread.sleep(200);
+		 } catch (InterruptedException e) {
+		 e.printStackTrace();
+		 }
 		// client.disableAllGestures();
+		 client.enableAllGestures();
 		//
-		// try {
-		// Thread.sleep(200);
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// client.applyChanges();
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		client.applyChanges();
 
 		try {
 			Thread.sleep(200);
@@ -108,6 +109,7 @@ public class RealSenseHands {
 	public static void main(String[] args) {
 		RealSenseHands realSenseHands = new RealSenseHands();
 		realSenseHands.init();
+		realSenseHands.client.verbose = true;
 		realSenseHands.start(new HandListener() {
 
 			@Override
