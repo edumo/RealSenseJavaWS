@@ -344,6 +344,22 @@ public class RealSenseWS extends WebSocketClient {
 
 		if (result.containsKey("hands")) {
 			HandMsg handMsg = gson.fromJson(message, HandMsg.class);
+			if (result.containsKey("gestures")) {
+				ArrayList dos = (ArrayList) result.get("gestures");
+				if (!dos.isEmpty()) {
+					//System.out.println("hoal");
+					for(int i = 0;i< dos.size();i++){
+						LinkedTreeMap<String, Object> gesture = (LinkedTreeMap<String, Object>) dos.get(i);
+						String gestureName = (String) gesture.get("name");
+						Double handId = (Double) gesture.get("handId");
+						for(Hand h:handMsg.hands){
+							if(h.uniqueId == handId.intValue()){
+								h.gestureName = gestureName;
+							}
+						}
+					}
+				}
+			}
 			if (handListener != null) {
 				handListener.newHands(handMsg.hands);
 			}
@@ -353,12 +369,7 @@ public class RealSenseWS extends WebSocketClient {
 			}
 		}
 
-		if (result.containsKey("gestures")) {
-			ArrayList dos = (ArrayList) result.get("gestures");
-			if (!dos.isEmpty()) {
-				System.out.println("hoal");
-			}
-		}
+		
 	}
 
 	@Override

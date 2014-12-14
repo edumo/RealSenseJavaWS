@@ -9,6 +9,8 @@ public class Hand {
 	public Integer bodySide;
 	
 	public Integer openness;
+	
+	public String gestureName = null;
 
 	public BoundingBoxImage boundingBoxImage;
 	public MassCenterImage massCenterImage;
