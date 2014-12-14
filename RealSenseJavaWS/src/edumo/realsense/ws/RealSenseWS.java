@@ -3,6 +3,7 @@ package edumo.realsense.ws;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.channels.NotYetConnectedException;
+import java.util.ArrayList;
 import java.util.Map;
 
 import org.java_websocket.client.WebSocketClient;
@@ -13,8 +14,10 @@ import org.java_websocket.handshake.ServerHandshake;
 import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
+import edumo.realsense.ws.face.Face;
 import edumo.realsense.ws.face.FacesMsg;
 import edumo.realsense.ws.face.ImageSize;
+import edumo.realsense.ws.hand.Hand;
 import edumo.realsense.ws.hand.HandMsg;
 import edumo.realsense.ws.listener.FaceListener;
 import edumo.realsense.ws.listener.HandListener;
@@ -324,12 +327,19 @@ public class RealSenseWS extends WebSocketClient {
 			if (faceListener != null) {
 				faceListener.newFaces(facesMsg.faces);
 			}
+		} else {
+			if (faceListener != null)
+				faceListener.newFaces(new ArrayList<Face>());
 		}
 
 		if (result.containsKey("hands")) {
 			HandMsg handMsg = gson.fromJson(message, HandMsg.class);
 			if (handListener != null) {
 				handListener.newHands(handMsg.hands);
+			}
+		} else {
+			if (handListener != null) {
+				handListener.newHands(new ArrayList<Hand>());
 			}
 		}
 	}
@@ -347,8 +357,12 @@ public class RealSenseWS extends WebSocketClient {
 	}
 
 	public int[] getImageSize() {
-		int[] ret = { imageSize.size.width, imageSize.size.height };
-		return ret;
-	}
+		if (imageSize != null) {
 
+			int[] ret = { imageSize.size.width, imageSize.size.height };
+			return ret;
+		} else
+			return null;
+
+	}
 }

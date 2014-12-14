@@ -11,6 +11,10 @@ public class RealSenseFaces {
 		
 	}
 	
+	public int[] getImageSize(){
+		return client.getImageSize();
+	}
+	
 	public void init(){
 		try {
 			client = new RealSenseWS();
