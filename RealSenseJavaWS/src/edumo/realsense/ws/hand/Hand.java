@@ -14,8 +14,11 @@ public class Hand {
 
 	public BoundingBoxImage boundingBoxImage;
 	public MassCenterImage massCenterImage;
-	// massCenterImage:{
-	// x:384,
-	// y:284
-	// },
-}
+	
+	public MassCenterWorld massCenterWorld;
+//	massCenterWorld: {
+//        x: Number,
+//        y: Number,
+//        z: Number,
+//    }
+	}
