@@ -85,7 +85,7 @@ public class RealSenseWS extends WebSocketClient {
 		error = false;
 		doTarget = UPDATE_INSTANCE;
 		AbstractRSCall callRS = new CallRS(counter, new InstanceRS("0"),
-				"2.0.1", "PXCMSenseManager_CreateInstance");
+				"3.0", "PXCMSenseManager_CreateInstance");
 		String json = gson.toJson(callRS);
 		send(json);
 	}
@@ -251,7 +251,7 @@ public class RealSenseWS extends WebSocketClient {
 	public void queryImageSize() {
 		doTarget = UPDATE_IMAGE_SIZE;
 		CallRS callRS = new CallRS(counter, new InstanceRS(""
-				+ captureManagerId), null, "PXCMCaptureManager_QueryImageSize");
+				+ captureManagerId), "0", "PXCMCaptureManager_QueryImageSize");
 		callRS.type = 1;
 		String json = gson.toJson(callRS);
 		send(json);

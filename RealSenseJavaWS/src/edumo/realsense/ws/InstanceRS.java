@@ -6,9 +6,10 @@ public class InstanceRS {
 
 	public InstanceRS(String value) {
 		super();
-		this.value = Integer.valueOf(value);
+		if (value != null)
+			this.value = Integer.valueOf(value);
 	}
-	
+
 	public InstanceRS(int value) {
 		super();
 		this.value = value;
